@@ -3,7 +3,7 @@ services:
     name: news-youtube-agent
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: python app.py
+    startCommand: python run.py
     env: python
     region: oregon
     plan: free
