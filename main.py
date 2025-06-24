@@ -1,15 +1,16 @@
+from news_generator import fetch_news
+from voiceover import generate_voiceover
+from video_editor import create_video
+from youtube_uploader import upload_to_youtube
 
-import time
+def run_agent():
+    topic, headline = fetch_news()
+    print(f"📰 Topic: {topic} | Headline: {headline}")
 
-def generate_video():
-    print("🔁 Generating YouTube news video...")
-    time.sleep(2)
-    print("✅ Video generated successfully!")
+    voice_file = generate_voiceover(headline)
+    video_path = create_video(voice_file, headline)
 
-def main():
-    print("🚀 YouTube AI News Agent Starting...")
-    generate_video()
-    print("🏁 Process Complete.")
+    upload_to_youtube(video_path, title=headline, description=f"{topic} - Daily News in Hindi")
 
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    run_agent()
