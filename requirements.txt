@@ -1,8 +1,5 @@
-moviepy==1.0.3
-pydub==0.25.1
-gTTS==2.2.4
-requests
-Pillow
-google-api-python-client==2.126.0
-google-auth==2.29.0
-google-auth-oauthlib==1.2.0
+moviepy
+google-api-python-client
+Flask
+pytube
+gtts
