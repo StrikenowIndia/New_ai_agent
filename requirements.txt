@@ -1,7 +1,6 @@
-moviepy
+moviepy==1.0.3
 gTTS
 Pillow
 requests
-flask
 google-api-python-client
 oauth2client
