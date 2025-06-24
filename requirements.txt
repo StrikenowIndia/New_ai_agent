@@ -1,5 +1,7 @@
 moviepy
+gTTS
+Pillow
+requests
+flask
 google-api-python-client
-Flask
-pytube
-gtts
+oauth2client
