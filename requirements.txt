@@ -1,7 +1,5 @@
-moviepy
-imageio-ffmpeg
-gTTS
+moviepy==1.0.3
+gTTS==2.2.4
+pydub==0.25.1
+requests
 Pillow
-google-auth
-google-auth-oauthlib
-google-api-python-client
