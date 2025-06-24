@@ -1,8 +1,5 @@
-moviepy==1.0.3
-gTTS
-Pillow
-requests
-google-api-python-client
-google-auth-oauthlib
-oauth2client
 flask
+moviepy
+google-auth
+google-auth-oauthlib
+google-api-python-client
