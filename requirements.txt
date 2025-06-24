@@ -1,4 +1,6 @@
-gTTS
+openai
+requests
 moviepy
-google-api-python-client
-google-auth-oauthlib
+gTTS
+Pillow
+youtube-upload
