@@ -3,4 +3,3 @@ requests
 moviepy
 gTTS
 Pillow
-youtube-upload
