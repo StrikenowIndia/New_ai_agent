@@ -1,4 +1,3 @@
-from dummy_server import keep_alive
 from video_editor import create_video
 from youtube_uploader import upload_to_youtube
 
