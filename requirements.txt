@@ -11,3 +11,4 @@ setuptools>=70.0.0
 gunicorn
 feedparser
 gTTS
+youtube-upload
