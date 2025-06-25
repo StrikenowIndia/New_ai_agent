@@ -2,6 +2,7 @@
 
 import datetime
 import os
+from news_fetcher import get_trending_news
 from news_collector import get_top_news
 from script_writer import generate_script
 from voiceover_generator import generate_voiceover
