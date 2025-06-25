@@ -1,17 +1,15 @@
-from flask import Flask
-import subprocess
+def keep_alive():
+    from threading import Thread
+    from flask import Flask
 
-app = Flask(__name__)
+    app = Flask('')
 
-@app.route('/')
-def home():
-    return 'YouTube AI News Agent is live!'
+    @app.route('/')
+    def home():
+        return "Bot is Alive!"
 
-@app.route('/run')
-def run_main():
-    try:
-        # Run main.py when this endpoint is triggered
-        result = subprocess.run(['python', 'main.py'], capture_output=True, text=True)
-        return f"main.py executed. Output:\n{result.stdout}\nErrors:\n{result.stderr}"
-    except Exception as e:
-        return f"Error: {str(e)}"
+    def run():
+        app.run(host='0.0.0.0', port=8080)
+
+    t = Thread(target=run)
+    t.start()
