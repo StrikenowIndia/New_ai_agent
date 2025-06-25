@@ -4,7 +4,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-def upload_to_youtube(title, description, file="final_video.mp4"):
+def upload_video(file, title, description):
     scopes = ["https://www.googleapis.com/auth/youtube.upload"]
     creds = None
 
@@ -36,3 +36,4 @@ def upload_to_youtube(title, description, file="final_video.mp4"):
         body=request_body,
         media_body=media
     ).execute()
+    print("✅ Video uploaded to YouTube successfully.")
