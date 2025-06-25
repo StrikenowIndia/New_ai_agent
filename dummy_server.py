@@ -1,4 +1,3 @@
-# dummy_server.py
 from flask import Flask
 import subprocess
 
@@ -12,6 +11,10 @@ def home():
 def run_main():
     try:
         result = subprocess.run(['python', 'main.py'], capture_output=True, text=True)
-        return f"✅ main.py executed.\n\n🟢 Output:\n{result.stdout}\n\n🔴 Errors:\n{result.stderr}"
+        return f"""
+        ✅ main.py executed.<br><br>
+        🟢 Output:<br><pre>{result.stdout}</pre><br>
+        🔴 Errors:<br><pre>{result.stderr}</pre>
+        """
     except Exception as e:
         return f"❌ Error: {str(e)}"
