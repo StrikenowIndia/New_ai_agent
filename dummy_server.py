@@ -1,10 +1,17 @@
 from flask import Flask
+import subprocess
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "StrikeNowIndia AI Agent Running"
+    return 'YouTube AI News Agent is live!'
 
-def keep_alive():
-    app.run(host='0.0.0.0', port=10000)
+@app.route('/run')
+def run_main():
+    try:
+        # Run main.py when this endpoint is triggered
+        result = subprocess.run(['python', 'main.py'], capture_output=True, text=True)
+        return f"main.py executed. Output:\n{result.stdout}\nErrors:\n{result.stderr}"
+    except Exception as e:
+        return f"Error: {str(e)}"
