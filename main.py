@@ -1,3 +1,5 @@
+import logging
+logging.basicConfig(filename='log.txt', level=logging.INFO)
 def main():
     print("📺 Starting video creation...")
 
