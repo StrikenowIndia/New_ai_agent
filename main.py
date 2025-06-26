@@ -45,3 +45,7 @@ def main():
 if __name__ == "__main__":
     open('log.txt', 'w').close()  # clear old logs
     main()
+video_path = create_video(script, audio_path)
+if not video_path or not os.path.exists(video_path):
+    logging.error("❌ Video creation failed. Skipping upload.")
+    return
