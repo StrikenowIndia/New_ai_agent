@@ -1,6 +1,9 @@
 # news_fetcher.py
 
 import feedparser
+import logging
+
+logging.basicConfig(filename='log.txt', level=logging.INFO)
 
 def get_trending_news():
     rss_feeds = [
@@ -13,14 +16,19 @@ def get_trending_news():
 
     for url in rss_feeds:
         feed = feedparser.parse(url)
+        logging.info(f"📥 Fetched feed: {url} with {len(feed.entries)} entries")
         for entry in feed.entries[:3]:  # Top 3 from each source
-            title = entry.title
+            headline = entry.title
             summary = entry.get("summary", "")
-            all_headlines.append(f"{title} - {summary}")
+            all_headlines.append({
+                "headline": headline.strip(),
+                "summary": summary.strip()
+            })
 
-    return all_headlines[:5]  # Only return top 5 headlines
+    logging.info(f"📰 Total news collected: {len(all_headlines)}")
+    return all_headlines[:5]  # Top 5 total
 
 if __name__ == "__main__":
     news = get_trending_news()
-    for i, item in enumerate(news):
-        print(f"{i+1}. {item}")
+    for i, item in enumerate(news, start=1):
+        print(f"{i}. {item['headline']} - {item['summary'][:100]}...")
