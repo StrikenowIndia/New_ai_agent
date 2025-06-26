@@ -1,3 +1,4 @@
+import os
 import logging
 
 def create_video(script, audio_path):
