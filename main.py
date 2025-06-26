@@ -1,21 +1,65 @@
+import datetime
 import logging
-logging.basicConfig(filename='log.txt', level=logging.INFO)
+import os
+from news_fetcher import get_trending_news
+from news_collector import get_top_news
+from script_writer import generate_script
+from voiceover_generator import generate_voiceover
+from video_editor import create_video
+from youtube_uploader import upload_video
+
+# Setup logging
+logging.basicConfig(filename='log.txt', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 def main():
-    print("📺 Starting video creation...")
+    logging.info("🛠️ Starting video generation...")
 
-    today = datetime.datetime.now().strftime("%Y-%m-%d")
-    news_data = get_top_news()
+    try:
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    if not news_data:
-        print("❌ No news found.")
-        return
+        # 1. Get news
+        news_data = get_top_news()
+        if not news_data:
+            logging.error("❌ No news data found!")
+            return
+        logging.info("✅ News fetched successfully.")
 
-    script = generate_script(news_data)
-    audio_path = generate_voiceover(script)
-    video_path = create_video(script, audio_path)
+        # 2. Generate script
+        try:
+            script = generate_script(news_data)
+            logging.info("✅ Script generated successfully.")
+        except Exception as e:
+            logging.error(f"❌ Error generating script: {e}")
+            return
 
-    video_title = f"आज की बड़ी खबरें - {today}"
-    video_description = "राष्ट्रीय और अंतरराष्ट्रीय सभी बड़ी खबरें देखें इस वीडियो में।"
-    upload_video(video_path, title=video_title, description=video_description)
+        # 3. Generate voiceover
+        try:
+            audio_path = generate_voiceover(script)
+            logging.info("✅ Voiceover generated: %s", audio_path)
+        except Exception as e:
+            logging.error(f"❌ Error generating voiceover: {e}")
+            return
 
-    print("✅ Upload complete.")
+        # 4. Create video
+        try:
+            video_path = create_video(script, audio_path)
+            logging.info("✅ Video created: %s", video_path)
+        except Exception as e:
+            logging.error(f"❌ Error creating video: {e}")
+            return
+
+        # 5. Upload video
+        try:
+            video_title = f"आज की बड़ी खबरें - {today}"
+            video_description = "जानिए आज की सभी बड़ी राष्ट्रीय और अंतरराष्ट्रीय खबरें एक ही वीडियो में।"
+            upload_video(video_path, title=video_title, description=video_description)
+            logging.info("✅ Video uploaded to YouTube successfully.")
+        except Exception as e:
+            logging.error(f"❌ Error uploading video: {e}")
+            return
+
+    except Exception as e:
+        logging.critical(f"💥 Unhandled exception in main: {e}")
+
+if __name__ == "__main__":
+    main()
