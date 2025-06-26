@@ -1,3 +1,11 @@
+with open("debug.txt", "w") as f:
+    f.write("✅ main.py started\n")
+
+try:
+    news_data = get_top_news()
+    f.write(f"News fetched: {news_data}\n")
+except Exception as e:
+    f.write(f"News fetch error: {e}\n")
 import datetime
 import logging
 import os
