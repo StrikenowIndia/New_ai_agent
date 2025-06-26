@@ -20,7 +20,7 @@ def main():
 
     # 1. Get today's date and fetch top news
     today = datetime.datetime.now().strftime("%Y-%m-%d")
-    news_data = get_top_news()  # [{'headline': ..., 'summary': ...}, ...]
+    news_data = get_top_news()
 
     if not news_data:
         logging.error("❌ No news data found!")
@@ -35,6 +35,11 @@ def main():
     # 4. Generate video using visuals + audio
     video_path = create_video(script, audio_path)
 
+    # ✅ Video creation error check (inside main)
+    if not video_path or not os.path.exists(video_path):
+        logging.error("❌ Video creation failed. Skipping upload.")
+        return
+
     # 5. Upload video to YouTube
     video_title = f"आज की बड़ी खबरें - {today}"
     video_description = "जानिए आज की सभी बड़ी राष्ट्रीय और अंतरराष्ट्रीय खबरें एक ही वीडियो में।"
@@ -45,7 +50,3 @@ def main():
 if __name__ == "__main__":
     open('log.txt', 'w').close()  # clear old logs
     main()
-video_path = create_video(script, audio_path)
-if not video_path or not os.path.exists(video_path):
-    logging.error("❌ Video creation failed. Skipping upload.")
-    return
