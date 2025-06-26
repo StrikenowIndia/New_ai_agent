@@ -1,3 +1,12 @@
+import logging
+
+logging.basicConfig(
+    filename="log.txt",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+logging.info("🔁 Cron job started")
 with open("debug.txt", "w") as f:
     f.write("✅ main.py started\n")
 
