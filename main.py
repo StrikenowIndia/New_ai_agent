@@ -1,6 +1,8 @@
 import datetime
 import os
 import logging
+import threading
+from flask import Flask, jsonify
 from news_fetcher import get_trending_news
 from news_collector import get_top_news
 from script_writer import generate_script
@@ -15,38 +17,45 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-def main():
-    logging.info("🛠️ Starting video generation...")
+app = Flask(__name__)
 
-    # 1. Get today's date and fetch top news
-    today = datetime.datetime.now().strftime("%Y-%m-%d")
-    news_data = get_top_news()
+def generate_video():
+    try:
+        logging.info("🛠️ Starting video generation...")
 
-    if not news_data:
-        logging.error("❌ No news data found!")
-        return
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        news_data = get_top_news()
 
-    # 2. Generate script from news
-    script = generate_script(news_data)
+        if not news_data:
+            logging.error("❌ No news data found!")
+            return
 
-    # 3. Generate voiceover from script
-    audio_path = generate_voiceover(script)
+        script = generate_script(news_data)
+        audio_path = generate_voiceover(script)
+        video_path = create_video(script, audio_path)
 
-    # 4. Generate video using visuals + audio
-    video_path = create_video(script, audio_path)
+        if not video_path or not os.path.exists(video_path):
+            logging.error("❌ Video creation failed. Skipping upload.")
+            return
 
-    # ✅ Video creation error check (inside main)
-    if not video_path or not os.path.exists(video_path):
-        logging.error("❌ Video creation failed. Skipping upload.")
-        return
+        video_title = f"आज की बड़ी खबरें - {today}"
+        video_description = "जानिए आज की सभी बड़ी राष्ट्रीय और अंतरराष्ट्रीय खबरें एक ही वीडियो में।"
+        upload_video(video_path, title=video_title, description=video_description)
 
-    # 5. Upload video to YouTube
-    video_title = f"आज की बड़ी खबरें - {today}"
-    video_description = "जानिए आज की सभी बड़ी राष्ट्रीय और अंतरराष्ट्रीय खबरें एक ही वीडियो में।"
-    upload_video(video_path, title=video_title, description=video_description)
+        logging.info("🎬 Video generated and uploaded successfully!")
+    except Exception as e:
+        logging.error(f"❌ Error in generate_video: {str(e)}")
 
-    logging.info("🎬 Video generated and uploaded successfully!")
+@app.route("/run", methods=["GET"])
+def run_video():
+    # Clear previous logs
+    open('log.txt', 'w').close()
+    
+    # Start background thread
+    thread = threading.Thread(target=generate_video)
+    thread.start()
+    
+    return jsonify({"status": "⏳ Video generation started in background."})
 
 if __name__ == "__main__":
-    open('log.txt', 'w').close()  # clear old logs
-    main()
+    app.run(host="0.0.0.0", port=10000)
