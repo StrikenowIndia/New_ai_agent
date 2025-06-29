@@ -1,11 +1,10 @@
 from flask import Flask
 import subprocess
 import logging
-import threading
-import main  # use your updated main.py without Flask
 
 app = Flask(__name__)
 
+# Set up logging to a file
 logging.basicConfig(
     filename='log.txt',
     level=logging.INFO,
@@ -19,12 +18,14 @@ def home():
 @app.route('/run')
 def run_main():
     try:
-        def background_task():
-            main.run()
+        result = subprocess.run(['python', 'main.py'], capture_output=True, text=True)
 
-        threading.Thread(target=background_task).start()
+        # Save output and error to log file
+        logging.info("✅ main.py Output:\n" + result.stdout)
+        logging.error("🔴 main.py Errors:\n" + result.stderr)
+
         return """
-        ✅ Video generation started in background.<br><br>
+        ✅ main.py executed. Check log.txt for details.<br><br>
         📝 <a href="/logs" target="_blank">View logs</a>
         """
     except Exception as e:
@@ -39,6 +40,3 @@ def view_logs():
         return f"<pre>{content}</pre>"
     except Exception as e:
         return f"❌ Cannot read log file: {str(e)}"
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
