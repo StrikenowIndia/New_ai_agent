@@ -12,5 +12,7 @@ google-auth-oauthlib==1.2.0
 google-api-python-client==2.124.0
 
 feedparser==6.0.11
-pyttsx3==2.90  # ✅ New: Offline TTS
+gTTS==2.5.1
+pydub==0.25.1
+
 setuptools==70.0.0
