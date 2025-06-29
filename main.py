@@ -1,6 +1,7 @@
 import datetime
 import os
 import logging
+import threading
 from flask import Flask, jsonify
 from news_fetcher import get_trending_news
 from news_collector import get_top_news
@@ -9,8 +10,6 @@ from voiceover_generator import generate_voiceover
 from video_editor import create_video
 from youtube_uploader import upload_video
 
-app = Flask(__name__)  # ✅ This is what Gunicorn needs
-
 # Setup logging
 logging.basicConfig(
     filename="log.txt",
@@ -18,7 +17,9 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-def run():
+app = Flask(__name__)
+
+def generate_video():
     try:
         logging.info("🛠️ Starting video generation...")
 
@@ -27,7 +28,7 @@ def run():
 
         if not news_data:
             logging.error("❌ No news data found!")
-            return "No news data found", 500
+            return
 
         script = generate_script(news_data)
         audio_path = generate_voiceover(script)
@@ -35,29 +36,26 @@ def run():
 
         if not video_path or not os.path.exists(video_path):
             logging.error("❌ Video creation failed. Skipping upload.")
-            return "Video creation failed", 500
+            return
 
         video_title = f"आज की बड़ी खबरें - {today}"
         video_description = "जानिए आज की सभी बड़ी राष्ट्रीय और अंतरराष्ट्रीय खबरें एक ही वीडियो में।"
         upload_video(video_path, title=video_title, description=video_description)
 
         logging.info("🎬 Video generated and uploaded successfully!")
-        return "Video generated and uploaded successfully!", 200
     except Exception as e:
-        logging.error(f"❌ Error in run: {str(e)}")
-        return f"Error: {str(e)}", 500
-
-@app.route("/")
-def home():
-    return "🟢 Server is running!"
+        logging.error(f"❌ Error in generate_video: {str(e)}")
 
 @app.route("/run", methods=["GET"])
-def run_trigger():
-    msg, code = run()
-    return jsonify({"message": msg}), code
+def run_video():
+    # Clear previous logs
+    open('log.txt', 'w').close()
+    
+    # Start background thread
+    thread = threading.Thread(target=generate_video)
+    thread.start()
+    
+    return jsonify({"status": "⏳ Video generation started in background."})
 
-# Local test
-def create_app():
-    app = Flask(__name__)
-    ...
-    return app
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
