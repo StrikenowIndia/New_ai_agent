@@ -17,7 +17,7 @@ def generate_voiceover(script_text, retries=3, delay=10):
                 audio_segments.append(AudioSegment.from_mp3(output_path))
                 break
             except Exception as e:
-                if "429" in str(e):
+                if "429" in str(e) or "Too Many Requests" in str(e):
                     print(f"⚠️ Rate limit hit. Waiting {delay} sec before retry... ({attempt+1}/{retries})")
                     time.sleep(delay)
                 else:
@@ -25,12 +25,10 @@ def generate_voiceover(script_text, retries=3, delay=10):
         else:
             raise Exception("❌ Failed after multiple attempts due to rate limit.")
 
-    # Merge all parts
     final_audio = sum(audio_segments)
     final_path = "output_audio.mp3"
     final_audio.export(final_path, format="mp3")
 
-    # Clean up temp files
     for idx in range(len(parts)):
         os.remove(f"part_{idx}.mp3")
 
