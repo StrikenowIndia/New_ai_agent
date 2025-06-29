@@ -1,10 +1,10 @@
 from flask import Flask
-import threading
+import subprocess
 import logging
-from main import generate_video  # 🟢 directly import the function
 
 app = Flask(__name__)
 
+# Set up logging to a file
 logging.basicConfig(
     filename='log.txt',
     level=logging.INFO,
@@ -18,20 +18,19 @@ def home():
 @app.route('/run')
 def run_main():
     try:
-        # Clear old logs
-        open("log.txt", "w").close()
+        result = subprocess.run(['python', 'main.py'], capture_output=True, text=True)
 
-        # Run video generator in background thread
-        thread = threading.Thread(target=generate_video)
-        thread.start()
+        # Save output and error to log file
+        logging.info("✅ main.py Output:\n" + result.stdout)
+        logging.error("🔴 main.py Errors:\n" + result.stderr)
 
         return """
-        ✅ Video generation started in background.<br><br>
+        ✅ main.py executed. Check log.txt for details.<br><br>
         📝 <a href="/logs" target="_blank">View logs</a>
         """
     except Exception as e:
-        logging.exception("❌ Exception while running generate_video")
-        return "❌ Error occurred. Check log.txt for details."
+        logging.exception("❌ Exception while running main.py")
+        return f"❌ Error occurred. Check log.txt for details."
 
 @app.route('/logs')
 def view_logs():
@@ -41,3 +40,4 @@ def view_logs():
         return f"<pre>{content}</pre>"
     except Exception as e:
         return f"❌ Cannot read log file: {str(e)}"
+        
