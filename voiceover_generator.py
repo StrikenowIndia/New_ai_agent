@@ -1,17 +1,15 @@
-from gtts import gTTS
-import time
+import pyttsx3
 
-def generate_voiceover(script_text, retries=3, delay=10):
+def generate_voiceover(script_text):
     output_path = "output_audio.mp3"
-    for attempt in range(retries):
-        try:
-            tts = gTTS(text=script_text, lang='hi')
-            tts.save(output_path)
-            return output_path  # ✅ Success
-        except Exception as e:
-            if "429" in str(e):
-                print(f"⚠️ Rate limit hit. Waiting {delay} sec before retry... ({attempt+1}/{retries})")
-                time.sleep(delay)
-            else:
-                raise e
-    raise Exception("❌ Failed to generate voiceover after multiple attempts due to rate limit.")
+    engine = pyttsx3.init()
+
+    # Optional: Try setting Hindi voice if available
+    for voice in engine.getProperty('voices'):
+        if "hi" in voice.id or "hindi" in voice.name.lower():
+            engine.setProperty('voice', voice.id)
+            break
+
+    engine.save_to_file(script_text, output_path)
+    engine.runAndWait()
+    return output_path
