@@ -1,8 +1,7 @@
+# main.py
 import datetime
 import os
 import logging
-from flask import Flask, jsonify
-
 from news_fetcher import get_trending_news
 from news_collector import get_top_news
 from script_writer import generate_script
@@ -10,15 +9,14 @@ from voiceover_generator import generate_voiceover
 from video_editor import create_video
 from youtube_uploader import upload_video
 
+# Setup logging
 logging.basicConfig(
     filename="log.txt",
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-app = Flask(__name__)
-
-def generate_video():
+def run():
     try:
         logging.info("🛠️ Starting video generation...")
 
@@ -43,22 +41,8 @@ def generate_video():
 
         logging.info("🎬 Video generated and uploaded successfully!")
     except Exception as e:
-        logging.error(f"❌ Error in generate_video: {str(e)}")
+        logging.error(f"❌ Error in run: {str(e)}")
 
-@app.route("/", methods=["GET"])
-def home():
-    return jsonify({"status": "✅ YouTube AI Agent is live."})
-
-@app.route("/run", methods=["GET"])
-def run_video():
-    open('log.txt', 'w').close()
-    generate_video()
-    return jsonify({"status": "✅ Video generation completed (check /log)."})
-
-@app.route("/log", methods=["GET"])
-def get_log():
-    with open("log.txt", "r") as f:
-        return f.read(), 200, {'Content-Type': 'text/plain; charset=utf-8'}
-
+# For local test only
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    run()
