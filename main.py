@@ -57,5 +57,7 @@ def run_trigger():
     return jsonify({"message": msg}), code
 
 # Local test
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+def create_app():
+    app = Flask(__name__)
+    ...
+    return app
