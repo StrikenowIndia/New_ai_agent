@@ -10,7 +10,6 @@ from voiceover_generator import generate_voiceover
 from video_editor import create_video
 from youtube_uploader import upload_video
 
-# Setup logging
 logging.basicConfig(
     filename="log.txt",
     level=logging.INFO,
@@ -46,17 +45,16 @@ def generate_video():
     except Exception as e:
         logging.error(f"❌ Error in generate_video: {str(e)}")
 
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({"status": "✅ YouTube AI Agent is live."})
+
 @app.route("/run", methods=["GET"])
 def run_video():
-    # Clear previous logs
     open('log.txt', 'w').close()
-    
-    # Start background thread
     thread = threading.Thread(target=generate_video)
     thread.start()
-    
     return jsonify({"status": "⏳ Video generation started in background."})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
-    
