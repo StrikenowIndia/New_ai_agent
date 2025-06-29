@@ -41,3 +41,7 @@ def generate_video():
         logging.info("🎬 Video generated and uploaded successfully!")
     except Exception as e:
         logging.error(f"❌ Error in generate_video: {str(e)}")
+
+# ✅ This line will make it actually run
+if __name__ == "__main__":
+    generate_video()
