@@ -31,3 +31,4 @@ if __name__ == "__main__":
     news = get_top_news()
     for i, item in enumerate(news, 1):
         print(f"{i}. {item['headline']}\n{item['summary']}\n")
+        
