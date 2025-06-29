@@ -1,8 +1,8 @@
 import datetime
 import os
 import logging
-import threading
 from flask import Flask, jsonify
+
 from news_fetcher import get_trending_news
 from news_collector import get_top_news
 from script_writer import generate_script
@@ -52,9 +52,13 @@ def home():
 @app.route("/run", methods=["GET"])
 def run_video():
     open('log.txt', 'w').close()
-    thread = threading.Thread(target=generate_video)
-    thread.start()
-    return jsonify({"status": "⏳ Video generation started in background."})
+    generate_video()
+    return jsonify({"status": "✅ Video generation completed (check /log)."})
+
+@app.route("/log", methods=["GET"])
+def get_log():
+    with open("log.txt", "r") as f:
+        return f.read(), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
