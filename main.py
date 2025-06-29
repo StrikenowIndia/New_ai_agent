@@ -58,4 +58,5 @@ def run_video():
     return jsonify({"status": "⏳ Video generation started in background."})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    PORT = int(os.environ.get("PORT", 10000))  # Fallback for local testing
+    app.run(host="0.0.0.0", port=PORT)
