@@ -1,24 +1,27 @@
 import os
 import logging
-from moviepy.editor import AudioFileClip, ColorClip
 
 def create_video(script, audio_path):
     try:
-        logging.info("🎞️ Creating video...")
+        # Example placeholder logic (आपका actual video logic यहाँ होगा)
+        import moviepy.editor as mp
+        from moviepy.editor import TextClip, AudioFileClip, CompositeVideoClip
 
+        # Check if audio file exists
         if not os.path.exists(audio_path):
             logging.error(f"❌ Audio file not found at: {audio_path}")
             return None
 
-        audio_clip = AudioFileClip(audio_path)
-        duration = audio_clip.duration
+        # Create a simple black screen with text
+        txt_clip = TextClip(script, fontsize=24, color='white', size=(1280, 720))
+        txt_clip = txt_clip.set_duration(60)  # 1-minute video
+        txt_clip = txt_clip.set_position('center')
 
-        # Solid black background
-        video_clip = ColorClip(size=(1280, 720), color=(0, 0, 0), duration=duration)
-        video_clip = video_clip.set_audio(audio_clip)
+        audio_clip = AudioFileClip(audio_path)
+        final_video = txt_clip.set_audio(audio_clip)
 
         output_path = "output_video.mp4"
-        video_clip.write_videofile(output_path, fps=24, codec="libx264", audio_codec="aac")
+        final_video.write_videofile(output_path, fps=24)
 
         logging.info("✅ Video created successfully.")
         return output_path
