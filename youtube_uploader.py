@@ -24,4 +24,3 @@ def upload_video(video_path, title, description):
         
     except Exception as e:
         logging.error(f"❌ Upload error: {str(e)}")
-
