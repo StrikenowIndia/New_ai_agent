@@ -1,6 +1,8 @@
 import datetime
 import os
 import logging
+import threading
+from flask import Flask, jsonify
 from news_fetcher import get_trending_news
 from news_collector import get_top_news
 from script_writer import generate_script
@@ -14,6 +16,8 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
+
+app = Flask(__name__)
 
 def generate_video():
     try:
@@ -42,6 +46,17 @@ def generate_video():
     except Exception as e:
         logging.error(f"❌ Error in generate_video: {str(e)}")
 
-# ✅ This line will make it actually run
+@app.route("/run", methods=["GET"])
+def run_video():
+    # Clear previous logs
+    open('log.txt', 'w').close()
+    
+    # Start background thread
+    thread = threading.Thread(target=generate_video)
+    thread.start()
+    
+    return jsonify({"status": "⏳ Video generation started in background."})
+
 if __name__ == "__main__":
-    generate_video()
+    app.run(host="0.0.0.0", port=10000)
+    
