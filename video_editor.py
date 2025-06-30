@@ -1,24 +1,31 @@
-import os
-import logging
+from moviepy.editor import concatenate_videoclips
 
 def create_video(script, audio_path):
     try:
-        # Example placeholder logic (आपका actual video logic यहाँ होगा)
         import moviepy.editor as mp
-        from moviepy.editor import TextClip, AudioFileClip, CompositeVideoClip
+        from moviepy.editor import TextClip, AudioFileClip, CompositeVideoClip, concatenate_videoclips
 
-        # Check if audio file exists
         if not os.path.exists(audio_path):
             logging.error(f"❌ Audio file not found at: {audio_path}")
             return None
 
-        # Create a simple black screen with text
-        txt_clip = TextClip(script, fontsize=24, color='white', size=(1280, 720))
-        txt_clip = txt_clip.set_duration(60)  # 1-minute video
-        txt_clip = txt_clip.set_position('center')
-
         audio_clip = AudioFileClip(audio_path)
-        final_video = txt_clip.set_audio(audio_clip)
+        duration = audio_clip.duration
+
+        # Split script into lines and make multiple TextClips
+        lines = script.split('. ')
+        clips = []
+
+        per_clip_duration = duration / max(1, len(lines))
+
+        for line in lines:
+            txt = TextClip(line.strip(), fontsize=32, color='white', size=(1280, 720), bg_color='black')
+            txt = txt.set_duration(per_clip_duration)
+            txt = txt.set_position('center')
+            clips.append(txt)
+
+        video = concatenate_videoclips(clips)
+        final_video = video.set_audio(audio_clip)
 
         output_path = "output_video.mp4"
         final_video.write_videofile(output_path, fps=24)
