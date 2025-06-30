@@ -1,19 +1,22 @@
 import datetime
 import os
 import logging
-from news_fetcher import get_trending_news
+import threading
+from flask import Flask, jsonify
 from news_collector import get_top_news
 from script_writer import generate_script
 from voiceover_generator import generate_voiceover
 from video_editor import create_video
 from youtube_uploader import upload_video
 
-# Setup logging
+# Logging setup
 logging.basicConfig(
     filename="log.txt",
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
+
+app = Flask(__name__)
 
 def generate_video():
     try:
@@ -40,4 +43,20 @@ def generate_video():
 
         logging.info("🎬 Video generated and uploaded successfully!")
     except Exception as e:
-        logging.exception("❌ Error in generate_video")
+        logging.error(f"❌ Error in generate_video: {str(e)}")
+
+@app.route("/", methods=["GET"])
+def home():
+    return "✅ main.py executed. Check log.txt for details.<br><br>📝 <a href='/logs' target='_blank'>View logs</a>"
+
+@app.route("/run", methods=["GET"])
+def run_video():
+    open('log.txt', 'w').close()
+    thread = threading.Thread(target=generate_video)
+    thread.start()
+    return jsonify({"status": "⏳ Video generation started in background."})
+
+@app.route("/logs", methods=["GET"])
+def read_logs():
+    with open("log.txt", "r") as f:
+        return "<pre>" + f.read() + "</pre>"
